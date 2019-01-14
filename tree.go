@@ -113,7 +113,7 @@ func (n *node) print(indent, prefix string, opts *Options) {
 		if i == len(n.subNodes)-1 {
 			subNode.print(indent+"    ", indent+"└── ", opts)
 		} else {
-			subNode.print(indent+"│   ", indent+"├── ", opts)
+			subNode.print(indent+"│   ", indent+"├── ", opts)
 		}
 	}
 }
