@@ -4,11 +4,15 @@ import (
 	"errors"
 	"fmt"
 	"io"
+	"math"
 	"os"
 	"path/filepath"
 	"sort"
 	"strings"
 )
+
+// DefaultMaxDeepLevel default value for maxDeepLevel option.
+const DefaultMaxDeepLevel = math.MaxInt32
 
 // Options store options for the tree command.
 type Options struct {
@@ -21,6 +25,7 @@ type Options struct {
 // Tree represents a directory tree.
 type Tree struct {
 	root *node
+	opts *Options
 }
 
 // node represents a file or a directory in a tree.
@@ -32,6 +37,14 @@ type node struct {
 
 // MakeTree traverses the directory tree rooted at the given path and returns the tree.
 func MakeTree(rootPath string, opts *Options) (*Tree, error) {
+	if opts == nil {
+		opts = &Options{
+			allFiles:     false,
+			maxDeepLevel: DefaultMaxDeepLevel,
+			out:          os.Stdout,
+		}
+	}
+
 	rootFile, err := os.Open(rootPath)
 	if err != nil {
 		return nil, err
@@ -50,7 +63,7 @@ func MakeTree(rootPath string, opts *Options) (*Tree, error) {
 	if err != nil {
 		return nil, err
 	}
-	return &Tree{root: root}, nil
+	return &Tree{root: root, opts: opts}, nil
 }
 
 func traverse(path string, depth int, opts *Options) (*node, error) {
@@ -65,10 +78,7 @@ func traverse(path string, depth int, opts *Options) (*node, error) {
 		return nil, err
 	}
 
-	n := &node{
-		baseName: fi.Name(),
-		isDir:    fi.IsDir(),
-	}
+	n := &node{baseName: fi.Name(), isDir: fi.IsDir()}
 	// return if the node is a file
 	if !n.isDir {
 		return n, nil
@@ -102,8 +112,12 @@ func traverse(path string, depth int, opts *Options) (*node, error) {
 }
 
 // Print the structure of the tree.
-func (t *Tree) Print(opts *Options) {
-	t.root.print("", "", opts)
+func (t *Tree) Print() {
+	if t == nil {
+		fmt.Fprintf(t.opts.out, "tree pointer is nil")
+		return
+	}
+	t.root.print("", "", t.opts)
 }
 
 func (n *node) print(indent, prefix string, opts *Options) {

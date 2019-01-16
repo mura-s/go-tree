@@ -2,14 +2,13 @@ package main
 
 import (
 	"bytes"
-	"math"
 	"testing"
 )
 
 var (
 	opts = &Options{
 		allFiles:     false,
-		maxDeepLevel: math.MaxInt32,
+		maxDeepLevel: DefaultMaxDeepLevel,
 	}
 	expected = `testdata
 ├── dir1
@@ -23,7 +22,7 @@ var (
 
 	allFilesOpts = &Options{
 		allFiles:     true,
-		maxDeepLevel: math.MaxInt32,
+		maxDeepLevel: DefaultMaxDeepLevel,
 	}
 	expectedForAllFilesOpts = `testdata
 ├── .dotdir1
@@ -64,7 +63,7 @@ func TestTreeCommand(t *testing.T) {
 		if err != nil {
 			t.Fatalf("failed to make tree %v", err)
 		}
-		tree.Print(c.opts)
+		tree.Print()
 
 		if b.String() != c.expected {
 			t.Errorf("case %d:\ngot:\n%v\nwant:\n%v", i, b.String(), c.expected)

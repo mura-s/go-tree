@@ -3,13 +3,12 @@ package main
 import (
 	"flag"
 	"fmt"
-	"math"
 	"os"
 )
 
 var (
 	allFiles     = flag.Bool("a", false, "")
-	maxDeepLevel = flag.Int("L", math.MaxInt32, "")
+	maxDeepLevel = flag.Int("L", DefaultMaxDeepLevel, "")
 
 	usage = fmt.Sprintf(`Usage:
   %s [Options...] [--] <directory_path>
@@ -27,7 +26,7 @@ func main() {
 		flag.Usage()
 		os.Exit(2)
 	}
-	path := flag.Args()[0]
+	path := flag.Arg(0)
 	opts := &Options{
 		allFiles:     *allFiles,
 		maxDeepLevel: *maxDeepLevel,
@@ -39,5 +38,5 @@ func main() {
 		fmt.Fprintf(os.Stderr, "failed to make tree: %v", err)
 		os.Exit(1)
 	}
-	tree.Print(opts)
+	tree.Print()
 }
