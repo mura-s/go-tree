@@ -45,13 +45,7 @@ func MakeTree(rootPath string, opts *Options) (*Tree, error) {
 		}
 	}
 
-	rootFile, err := os.Open(rootPath)
-	if err != nil {
-		return nil, err
-	}
-	defer rootFile.Close()
-
-	rootFI, err := rootFile.Stat()
+	rootFI, err := os.Lstat(rootPath)
 	if err != nil {
 		return nil, err
 	}
@@ -67,13 +61,7 @@ func MakeTree(rootPath string, opts *Options) (*Tree, error) {
 }
 
 func traverse(path string, depth int, opts *Options) (*node, error) {
-	file, err := os.Open(path)
-	if err != nil {
-		return nil, err
-	}
-	defer file.Close()
-
-	fi, err := file.Stat()
+	fi, err := os.Lstat(path)
 	if err != nil {
 		return nil, err
 	}
@@ -88,8 +76,14 @@ func traverse(path string, depth int, opts *Options) (*node, error) {
 		return n, nil
 	}
 
-	// traverse sub directories
-	names, err := file.Readdirnames(0)
+	// traverse sub directories if the node is a directory
+	dir, err := os.Open(path)
+	if err != nil {
+		return nil, err
+	}
+	defer dir.Close()
+
+	names, err := dir.Readdirnames(0)
 	if err != nil {
 		return nil, err
 	}
