@@ -28,9 +28,9 @@ func main() {
 	}
 	path := flag.Arg(0)
 	opts := &Options{
-		allFiles:     *allFiles,
-		maxDeepLevel: *maxDeepLevel,
-		out:          os.Stdout,
+		AllFiles:     *allFiles,
+		MaxDeepLevel: *maxDeepLevel,
+		Out:          os.Stdout,
 	}
 
 	tree, err := MakeTree(path, opts)

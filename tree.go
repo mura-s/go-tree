@@ -11,15 +11,15 @@ import (
 	"strings"
 )
 
-// DefaultMaxDeepLevel default value for maxDeepLevel option.
+// DefaultMaxDeepLevel is default value for MaxDeepLevel option.
 const DefaultMaxDeepLevel = math.MaxInt32
 
 // Options store options for the tree command.
 type Options struct {
-	allFiles     bool
-	maxDeepLevel int
+	AllFiles     bool
+	MaxDeepLevel int
 
-	out io.Writer // writes the result to out.
+	Out io.Writer // writes the result to Out.
 }
 
 // Tree represents a directory tree.
@@ -39,9 +39,9 @@ type node struct {
 func MakeTree(rootPath string, opts *Options) (*Tree, error) {
 	if opts == nil {
 		opts = &Options{
-			allFiles:     false,
-			maxDeepLevel: DefaultMaxDeepLevel,
-			out:          os.Stdout,
+			AllFiles:     false,
+			MaxDeepLevel: DefaultMaxDeepLevel,
+			Out:          os.Stdout,
 		}
 	}
 
@@ -83,8 +83,8 @@ func traverse(path string, depth int, opts *Options) (*node, error) {
 	if !n.isDir {
 		return n, nil
 	}
-	// maxDeepLevel option
-	if depth >= opts.maxDeepLevel {
+	// MaxDeepLevel option
+	if depth >= opts.MaxDeepLevel {
 		return n, nil
 	}
 
@@ -96,8 +96,8 @@ func traverse(path string, depth int, opts *Options) (*node, error) {
 	sort.Strings(names)
 
 	for _, name := range names {
-		// allFiles option
-		if !opts.allFiles && strings.HasPrefix(name, ".") {
+		// AllFiles option
+		if !opts.AllFiles && strings.HasPrefix(name, ".") {
 			continue
 		}
 
@@ -114,14 +114,14 @@ func traverse(path string, depth int, opts *Options) (*node, error) {
 // Print the structure of the tree.
 func (t *Tree) Print() {
 	if t == nil {
-		fmt.Fprintf(t.opts.out, "tree pointer is nil")
+		fmt.Fprintf(t.opts.Out, "tree pointer is nil")
 		return
 	}
 	t.root.print("", "", t.opts)
 }
 
 func (n *node) print(indent, prefix string, opts *Options) {
-	fmt.Fprintf(opts.out, "%s%s\n", prefix, n.baseName)
+	fmt.Fprintf(opts.Out, "%s%s\n", prefix, n.baseName)
 
 	for i, subNode := range n.subNodes {
 		if i == len(n.subNodes)-1 {

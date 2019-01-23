@@ -7,8 +7,8 @@ import (
 
 var (
 	opts = &Options{
-		allFiles:     false,
-		maxDeepLevel: DefaultMaxDeepLevel,
+		AllFiles:     false,
+		MaxDeepLevel: DefaultMaxDeepLevel,
 	}
 	expected = `testdata
 ├── dir1
@@ -21,8 +21,8 @@ var (
 `
 
 	allFilesOpts = &Options{
-		allFiles:     true,
-		maxDeepLevel: DefaultMaxDeepLevel,
+		AllFiles:     true,
+		MaxDeepLevel: DefaultMaxDeepLevel,
 	}
 	expectedForAllFilesOpts = `testdata
 ├── .dotdir1
@@ -37,8 +37,8 @@ var (
 `
 
 	maxDeepLevelOpts = &Options{
-		allFiles:     false,
-		maxDeepLevel: 1,
+		AllFiles:     false,
+		MaxDeepLevel: 1,
 	}
 	expectedForMaxDeepLevelOpts = `testdata
 ├── dir1
@@ -58,7 +58,7 @@ func TestTreeCommand(t *testing.T) {
 
 	for i, c := range cases {
 		var b bytes.Buffer
-		c.opts.out = &b
+		c.opts.Out = &b
 		tree, err := MakeTree("testdata", c.opts)
 		if err != nil {
 			t.Fatalf("failed to make tree %v", err)
